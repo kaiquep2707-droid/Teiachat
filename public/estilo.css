@@ -1635,3 +1635,99 @@ body.tremer {
         max-width: 80%;
     }
 }
+/* ========== CORREÇÃO PARA CELULAR - BARRA DE DIGITAÇÃO ========== */
+@media (max-width: 767px) {
+    /* Ajuste para o corpo da sala ocupar o espaço disponível */
+    .corpo-sala {
+        height: calc(100vh - 180px); /* Altura total menos cabeçalho e barra */
+        overflow-y: auto;
+    }
+    
+    /* Área de mensagens com altura flexível */
+    .area-mensagens {
+        max-height: none;
+        height: auto;
+        padding-bottom: 10px;
+    }
+    
+    /* Barra de digitação fixa na parte inferior */
+    .area-digitacao {
+        position: sticky;
+        bottom: 0;
+        background: #000000;
+        z-index: 100;
+        padding: 8px;
+        border-top: 2px solid #00FF00;
+        width: 100%;
+        box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Ajuste para quando o teclado virtual abrir */
+    .tela-sala {
+        height: 100vh;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+    
+    .sala-teia {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .corpo-sala {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+    }
+    
+    /* Garantir que a barra fique visível */
+    .area-digitacao {
+        flex-shrink: 0;
+    }
+    
+    /* Ajuste para o campo de mensagem */
+    .campo-mensagem {
+        font-size: 16px; /* Evita zoom automático no iOS */
+        padding: 12px;
+    }
+    
+    /* Botões maiores para toque */
+    .botao-enviar, .botao-limpar, .botao-emoji {
+        padding: 12px 15px;
+        min-width: 60px;
+    }
+    
+    /* Conversa privada no celular */
+    .conversa-privada {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 80vh;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .conversa-input-area input {
+        font-size: 16px;
+        padding: 12px;
+    }
+    
+    .conversa-input-area button {
+        padding: 12px 20px;
+    }
+}
+
+/* Ajuste específico para iOS */
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 767px) {
+        .tela-sala {
+            height: -webkit-fill-available;
+        }
+        
+        .sala-teia {
+            height: -webkit-fill-available;
+        }
+    }
+}
