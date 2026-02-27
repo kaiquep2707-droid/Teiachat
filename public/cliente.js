@@ -26,35 +26,31 @@ const elementos = {
     somNotificacao: document.getElementById('som-notificacao'),
     botaoAtivarSom: document.getElementById('botao-ativar-som'),
     indicadorSom: document.getElementById('indicador-som'),
-    salaSelecionada: null,
-    conversaAtiva: null,
-    conversas: {}
+    salaSelecionada: null
 };
 
-// Estado local
+// ========== ESTADO GLOBAL ==========
 let digitandoTimeout;
 let habitantes = [];
 let salas = [];
 let salaAtual = 'principal';
 let conversasPrivadas = {};
 let notificacaoTimeout;
+let conversaAtiva = null;  // <--- VARIÁVEL QUE FALTAVA!
 
 // Estado do som de notificação
 let somAtivo = false;
 let audioContext = null;
 let somQueue = [];
 
-// ========== INICIALIZAÇÃO DO SOM DE NOTIFICAÇÃO ==========
+// ========== INICIALIZAÇÃO DO SOM ==========
 
-// Inicializar áudio com clique do usuário
 function inicializarAudio() {
     if (somAtivo) return true;
     
     try {
-        // Criar contexto de áudio
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Testar com um beep
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
         
@@ -67,10 +63,8 @@ function inicializarAudio() {
         oscillator.start();
         oscillator.stop(audioContext.currentTime + 0.1);
         
-        // Se chegou aqui, o som funciona
         somAtivo = true;
         
-        // Atualizar interface
         if (elementos.indicadorSom) {
             elementos.indicadorSom.textContent = '🔊';
             elementos.indicadorSom.style.color = '#00FF00';
@@ -80,7 +74,6 @@ function inicializarAudio() {
             elementos.botaoAtivarSom.style.display = 'none';
         }
         
-        // Tocar sons na fila
         while (somQueue.length > 0) {
             const tipo = somQueue.shift();
             tocarSom(tipo);
@@ -94,7 +87,6 @@ function inicializarAudio() {
     }
 }
 
-// Função principal para tocar som de notificação
 function tocarSom(tipo = 'notificacao') {
     if (!somAtivo) {
         somQueue.push(tipo);
@@ -188,19 +180,16 @@ function tocarSom(tipo = 'notificacao') {
     }
 }
 
-// Ativar som manualmente
 window.ativarSom = function() {
     return inicializarAudio();
 };
 
 // ========== INICIALIZAÇÃO ==========
 
-// Tentar inicializar áudio automaticamente
 document.addEventListener('click', function() {
     inicializarAudio();
 }, { once: true });
 
-// Entrar na teia
 socket.emit('entrar_na_teia', { 
     apelido: apelido,
     avatar: avatar 
@@ -208,19 +197,16 @@ socket.emit('entrar_na_teia', {
 
 // ========== RECEBER EVENTOS ==========
 
-// Lista de salas atualizada
 socket.on('atualizar_salas', (salasAtualizadas) => {
     salas = salasAtualizadas;
     atualizarListaSalas();
 });
 
-// Histórico da sala
 socket.on('historico_da_sala', (historico) => {
     limparMensagensPublicas();
     historico.forEach(mensagem => adicionarMensagemPublica(mensagem));
 });
 
-// Nova mensagem na sala
 socket.on('mensagem_da_teia', (mensagem) => {
     if (!elementos.mensagens) return;
     adicionarMensagemPublica(mensagem);
@@ -231,14 +217,12 @@ socket.on('mensagem_da_teia', (mensagem) => {
     }
 });
 
-// Atualizar lista de habitantes da sala
 socket.on('atualizar_habitantes_da_sala', (habitantesDaSala) => {
     habitantes = habitantesDaSala;
     atualizarListaHabitantes();
     atualizarContagens();
 });
 
-// Alguém está digitando na sala
 socket.on('alguem_tecelando', (apelidoDigitando) => {
     elementos.digitandoStatus.textContent = `🕷️ ${apelidoDigitando} está tecendo...`;
 });
@@ -247,7 +231,6 @@ socket.on('alguem_parou_de_tecer', () => {
     elementos.digitandoStatus.textContent = '';
 });
 
-// Troca de sala confirmada
 socket.on('sala_trocada', ({ salaId, nome }) => {
     salaAtual = salaId;
     elementos.salaAtualNome.textContent = nome;
@@ -256,14 +239,12 @@ socket.on('sala_trocada', ({ salaId, nome }) => {
     tocarSom('sucesso');
 });
 
-// Sala criada
 socket.on('sala_criada', ({ salaId, nome }) => {
     fecharModalCriarSala();
     mostrarNotificacao('✅ Sucesso', `Sala "${nome}" criada!`, 3000);
     tocarSom('sucesso');
 });
 
-// Erro
 socket.on('erro_sala', (mensagem) => {
     alert(mensagem);
     tocarSom('erro');
@@ -272,7 +253,6 @@ socket.on('erro_sala', (mensagem) => {
 
 // ========== CONVERSAS PRIVADAS ==========
 
-// Solicitação de conversa privada
 socket.on('conversa_privada_solicitada', ({ conversaId, de, avatar }) => {
     if (!conversasPrivadas[conversaId]) {
         conversasPrivadas[conversaId] = {
@@ -289,7 +269,6 @@ socket.on('conversa_privada_solicitada', ({ conversaId, de, avatar }) => {
     }
 });
 
-// Conversa iniciada
 socket.on('conversa_iniciada', ({ conversaId, com, avatar }) => {
     conversasPrivadas[conversaId] = {
         id: conversaId,
@@ -305,7 +284,6 @@ socket.on('conversa_iniciada', ({ conversaId, com, avatar }) => {
     tocarSom('sucesso');
 });
 
-// Histórico de conversa privada
 socket.on('historico_conversa_privada', (mensagens) => {
     if (conversaAtiva && conversasPrivadas[conversaAtiva]) {
         conversasPrivadas[conversaAtiva].mensagens = mensagens;
@@ -313,7 +291,6 @@ socket.on('historico_conversa_privada', (mensagens) => {
     }
 });
 
-// Nova mensagem privada
 socket.on('nova_mensagem_privada', (mensagem) => {
     for (let id in conversasPrivadas) {
         const conversa = conversasPrivadas[id];
@@ -330,7 +307,7 @@ socket.on('nova_mensagem_privada', (mensagem) => {
                     `${mensagem.de}: ${mensagem.texto.substring(0, 30)}${mensagem.texto.length > 30 ? '...' : ''}`, 
                     4000);
                 tocarSom('notificacao');
-                tremerTela(); // SÓ TREME PARA MENSAGENS PRIVADAS!
+                tremerTela();
             }
             
             atualizarListaConversas();
@@ -339,7 +316,6 @@ socket.on('nova_mensagem_privada', (mensagem) => {
     }
 });
 
-// Indicadores de digitação privada
 socket.on('alguem_tecelando_privado', ({ de, conversaId }) => {
     if (conversaAtiva === conversaId) {
         elementos.dicasDigitacao.textContent = `✏️ ${de} está digitando...`;
@@ -352,7 +328,6 @@ socket.on('alguem_parou_de_tecer_privado', (conversaId) => {
     }
 });
 
-// Convite para sala privada
 socket.on('convite_sala_privada', ({ salaId, nome, de }) => {
     if (confirm(`🔔 ${de} te convidou para entrar na sala "${nome}". Aceitar?`)) {
         socket.emit('trocar_sala', { salaId: salaId });
@@ -597,7 +572,8 @@ function enviarMensagemPrivada() {
     }
 }
 
-// Mensagens públicas
+// ========== MENSAGENS PÚBLICAS ==========
+
 function adicionarMensagemPublica(msg) {
     const msgDiv = document.createElement('div');
     const ehMinha = msg.apelido === apelido;
@@ -745,7 +721,8 @@ window.sairDaTeia = () => {
     }
 };
 
-// Eventos de digitação
+// ========== EVENTOS DE TECLADO ==========
+
 elementos.campoMensagem.addEventListener('input', () => {
     socket.emit('tecelao_digitando', { tipo: 'sala' });
     
@@ -762,7 +739,6 @@ elementos.campoMensagem.addEventListener('keypress', (e) => {
     }
 });
 
-// Eventos da conversa privada
 const conversaInput = document.getElementById('conversa-input');
 if (conversaInput) {
     conversaInput.addEventListener('input', () => {
@@ -790,21 +766,17 @@ if (conversaInput) {
     });
 }
 
-// Teclas de atalho
 document.addEventListener('keydown', (e) => {
-    // Ctrl+K: Limpar mensagens
     if (e.ctrlKey && e.key === 'k') {
         e.preventDefault();
         limparMensagensPublicas();
     }
     
-    // Ctrl+E: Abrir emojis
     if (e.ctrlKey && e.key === 'e') {
         e.preventDefault();
         toggleEmojis();
     }
     
-    // Escape: Fechar modais
     if (e.key === 'Escape') {
         fecharModalSenha();
         fecharModalCriarSala();
@@ -816,7 +788,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Inicializar som no primeiro clique em qualquer botão
 document.querySelectorAll('button').forEach(btn => {
     btn.addEventListener('click', () => {
         inicializarAudio();
