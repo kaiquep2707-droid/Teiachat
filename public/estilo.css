@@ -1731,3 +1731,153 @@ body.tremer {
         }
     }
 }
+/* ========== CORREÇÃO PARA BARRA DE HABITANTES NO CELULAR ========== */
+@media (max-width: 767px) {
+    /* Ajuste na estrutura para mostrar a barra de habitantes */
+    .corpo-sala {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 180px);
+        overflow-y: auto;
+    }
+    
+    /* Barra de salas no topo */
+    .barra-salas {
+        order: 1;
+        max-height: 100px;
+        flex-shrink: 0;
+    }
+    
+    /* Área de mensagens no meio */
+    .area-mensagens {
+        order: 2;
+        flex: 1;
+        min-height: 200px;
+        overflow-y: auto;
+    }
+    
+    /* Barra de habitantes visível e acessível */
+    .barra-habitantes {
+        order: 3;
+        max-height: 150px;
+        flex-shrink: 0;
+        border-top: 2px solid #00FF00;
+        border-bottom: 2px solid #00FF00;
+        background: #000000;
+        display: flex !important;
+        flex-direction: column;
+    }
+    
+    /* Lista de habitantes em horizontal rolável */
+    .lista-habitantes {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 8px !important;
+        gap: 8px !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    
+    /* Itens da lista de habitantes */
+    .habitante-item {
+        flex: 0 0 auto !important;
+        min-width: 80px;
+        max-width: 100px;
+        padding: 8px 12px !important;
+        margin: 0 !important;
+        background: #112211;
+        border: 1px solid #00FF00;
+        border-radius: 20px !important;
+        font-size: 14px !important;
+        text-align: center;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .habitante-avatar {
+        font-size: 24px !important;
+    }
+    
+    .habitante-nome {
+        font-size: 12px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+    }
+    
+    /* Indicador de digitação */
+    .digitando-status {
+        display: block !important;
+        order: 4;
+        padding: 5px 10px;
+        font-size: 12px;
+        background: #112211;
+        border-top: 1px solid #00FF00;
+    }
+    
+    /* Conversas rápidas */
+    .conversas-rapidas {
+        display: block !important;
+        order: 5;
+        max-height: 80px;
+        border-top: 2px solid #00FF00;
+        margin-top: 0;
+        padding: 5px;
+    }
+    
+    /* Ajuste na área de digitação */
+    .area-digitacao {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: #000000;
+        border-top: 2px solid #00FF00;
+        padding: 8px;
+        box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
+    }
+    
+    /* Espaço extra no final do corpo para não esconder conteúdo atrás da barra fixa */
+    .corpo-sala {
+        padding-bottom: 70px;
+    }
+    
+    /* Título da barra de habitantes */
+    .barra-habitantes .titulo-barra {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+    
+    /* Mini contagem */
+    .barra-habitantes .mini-contagem {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+}
+
+/* Ajuste para telas muito pequenas */
+@media (max-width: 480px) {
+    .habitante-item {
+        min-width: 70px !important;
+        padding: 6px 8px !important;
+    }
+    
+    .habitante-avatar {
+        font-size: 20px !important;
+    }
+    
+    .habitante-nome {
+        font-size: 10px !important;
+        max-width: 60px;
+    }
+    
+    .barra-habitantes {
+        max-height: 130px;
+    }
+}
