@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teia - Entrar</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="tela-entrada">
+    <div class="teia-fundo"></div>
+    
+    <div class="portal-entrada">
+        <div class="cabecalho-teia">
+            <h1 class="titulo-teia">🕸️ TEIA</h1>
+            <div class="subtitulo">conexões analógicas, vibes digitais</div>
+        </div>
+        
+        <div class="caixa-entrada">
+            <marquee class="faixa-retro">
+                ⚡ crie salas ★ converse em particular ★ notificações ★ som ★ tela treme ⚡
+            </marquee>
+            
+            <div class="formulario-entrada">
+                <label class="label-piscando">› seu codinome:</label>
+                <input type="text" id="apelido" class="campo-retro" placeholder="digite aqui..." maxlength="15" autofocus>
+                
+                <label class="label-piscando">› seu avatar:</label>
+                <div class="selecao-avatar" id="selecao-avatar"></div>
+                
+                <button onclick="tecerEntrada()" class="botao-teia">
+                    <span>TECER ENTRADA</span>
+                    <span class="botao-seta">→</span>
+                </button>
+                
+                <div class="status-conexao" id="status"></div>
+            </div>
+            
+            <div class="rodape-entrada">
+                <div class="status-rede">
+                    <span class="ponto-rede"></span>
+                    <span>rede ativa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const avatares = ['😎', '🕷️', '🕸️', '👽', '🤖', '👻', '💀', '🎃', '😺', '🐶', '🦊', '🐸', '🐲', '🦉', '🐺', '🦝'];
+        let avatarSelecionado = '🕷️';
+        
+        // Criar seleção de avatares
+        const container = document.getElementById('selecao-avatar');
+        avatares.forEach(avatar => {
+            const span = document.createElement('span');
+            span.className = 'avatar-opcao';
+            span.textContent = avatar;
+            span.onclick = () => {
+                document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
+                span.classList.add('selecionado');
+                avatarSelecionado = avatar;
+            };
+            if (avatar === '🕷️') span.classList.add('selecionado');
+            container.appendChild(span);
+        });
+        
+        function tecerEntrada() {
+            const apelido = document.getElementById('apelido').value.trim();
+            const status = document.getElementById('status');
+            
+            if (!apelido) {
+                status.innerHTML = '❌ teia requer um codinome!';
+                return;
+            }
+            
+            if (apelido.length < 3) {
+                status.innerHTML = '❌ pelo menos 3 caracteres';
+                return;
+            }
+            
+            localStorage.setItem('teia_apelido', apelido);
+            localStorage.setItem('teia_avatar', avatarSelecionado);
+            
+            status.innerHTML = '🕷️ tecendo conexão...';
+            
+            setTimeout(() => {
+                window.location.href = 'sala.html';
+            }, 1000);
+        }
+        
+        document.getElementById('apelido').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') tecerEntrada();
+        });
+        <!-- No final do body, antes do script -->
+<div class="som-control">
+    <button onclick="ativarSom()" class="botao-som" id="botao-ativar-som">
+        🔇 Ativar Som
+    </button>
+    <span class="indicador-som" id="indicador-som">🔇</span>
+</div>
+    </script>
+</body>
+</html>

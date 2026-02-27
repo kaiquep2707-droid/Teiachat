@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teia - Salas de Chat</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="tela-sala">
+    <div class="teia-fundo"></div>
+    
+    <!-- Controle de som -->
+    <div class="som-control">
+        <button onclick="ativarSom()" class="botao-som" id="botao-ativar-som">
+            🔇 Ativar Som
+        </button>
+        <span class="indicador-som" id="indicador-som">🔇</span>
+    </div>
+    
+    <!-- Notificação flutuante -->
+    <div class="notificacao" id="notificacao">
+        <div class="notificacao-conteudo" id="notificacao-mensagem"></div>
+    </div>
+    
+    <div class="sala-teia">
+        <div class="topo-sala">
+            <div class="logo-sala">
+                <h2>🕸️ TEIA</h2>
+                <span class="versao">v.7.0 - FINAL</span>
+            </div>
+            
+            <div class="info-sala">
+                <div class="sala-atual">
+                    📍 sala: <span class="destaque" id="sala-atual-nome">PRINCIPAL</span>
+                </div>
+                <div class="contagem-online" id="contagem-online">
+                    <span class="numero-online">0</span> online
+                </div>
+            </div>
+            
+            <div class="acoes-topo">
+                <button onclick="abrirModalCriarSala()" class="botao-acao" title="Criar sala privada">
+                    🔒 +
+                </button>
+                <button onclick="abrirModalConversaPrivada()" class="botao-acao" title="Iniciar conversa privada">
+                    💬
+                </button>
+                <button onclick="sairDaTeia()" class="botao-sair">
+                    ⏻ SAIR
+                </button>
+            </div>
+        </div>
+        
+        <div class="corpo-sala">
+            <!-- Barra lateral com salas -->
+            <div class="barra-salas">
+                <div class="titulo-barra">
+                    <span>📡 SALAS</span>
+                    <span class="mini-contagem" id="total-salas">0</span>
+                </div>
+                
+                <div class="lista-salas" id="lista-salas"></div>
+                
+                <div class="info-salas">
+                    <div class="info-item">🖱️ clique = entrar</div>
+                    <div class="info-item">🔒 com cadeado = tem senha</div>
+                    <div class="info-item">🖱️ direito em privada = convidar</div>
+                </div>
+            </div>
+            
+            <!-- Área principal de mensagens -->
+            <div class="area-mensagens" id="area-mensagens">
+                <div class="bem-vindo-teia">
+                    <div class="icone-bem-vindo">🕷️</div>
+                    <div class="texto-bem-vindo">
+                        escolha uma sala ou inicie uma conversa privada
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Barra lateral com habitantes -->
+            <div class="barra-habitantes">
+                <div class="titulo-barra">
+                    <span>🕷️ AQUI</span>
+                    <span class="mini-contagem" id="mini-contagem">0</span>
+                </div>
+                
+                <div class="lista-habitantes" id="lista-habitantes"></div>
+                
+                <div class="digitando-status" id="digitando-status"></div>
+                
+                <div class="conversas-rapidas" id="lista-conversas">
+                    <div class="titulo-conversas">💬 CONVERSAS</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="area-digitacao">
+            <div class="campo-wrapper">
+                <input type="text" id="campo-mensagem" class="campo-mensagem" placeholder="mensagem para a sala..." maxlength="200" autocomplete="off">
+                <div class="dicas-digitacao" id="dicas-digitacao"></div>
+            </div>
+            
+            <div class="botoes-acao">
+                <button onclick="enviarMensagem()" class="botao-enviar">ENVIAR</button>
+                <button onclick="limparCampo()" class="botao-limpar" title="limpar">⌫</button>
+                <button onclick="toggleEmojis()" class="botao-emoji" title="emojis">☺</button>
+            </div>
+        </div>
+        
+        <div class="painel-emojis" id="painel-emojis">
+            <div class="emojis-grid">
+                <span onclick="inserirEmoji(':)')">:)</span>
+                <span onclick="inserirEmoji(':D')">:D</span>
+                <span onclick="inserirEmoji(':(')">:(</span>
+                <span onclick="inserirEmoji(';-)')">;-)</span>
+                <span onclick="inserirEmoji('<3')"><3</span>
+                <span onclick="inserirEmoji('xD')">xD</span>
+                <span onclick="inserirEmoji(':P')">:P</span>
+                <span onclick="inserirEmoji(':*')">:*</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Área de conversa privada -->
+    <div class="conversa-privada" id="area-conversas-privadas">
+        <div class="conversa-header">
+            <span id="conversa-titulo">Conversa privada</span>
+            <button onclick="fecharConversaPrivada()" class="fechar-conversa">✕</button>
+        </div>
+        <div class="conversa-mensagens" id="conversa-mensagens"></div>
+        <div class="conversa-input-area">
+            <input type="text" id="conversa-input" placeholder="mensagem privada..." maxlength="200">
+            <button onclick="enviarMensagemPrivada()">ENVIAR</button>
+        </div>
+    </div>
+    
+    <!-- Modal para senha de sala privada -->
+    <div class="modal" id="modal-senha">
+        <div class="modal-conteudo">
+            <h3>🔒 SALA PRIVADA</h3>
+            <p>Digite a senha:</p>
+            <input type="password" id="senha-input" placeholder="senha">
+            <div class="modal-botoes">
+                <button onclick="confirmarSenha()" class="botao-confirmar">ENTRAR</button>
+                <button onclick="fecharModalSenha()" class="botao-cancelar">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para criar sala privada -->
+    <div class="modal" id="modal-criar-sala">
+        <div class="modal-conteudo">
+            <h3>🔒 CRIAR SALA PRIVADA</h3>
+            <p>Nome da sala:</p>
+            <input type="text" id="nova-sala-nome" placeholder="ex: Festa do Arromba" maxlength="30">
+            <p>Senha (opcional):</p>
+            <input type="password" id="nova-sala-senha" placeholder="deixe em branco para pública">
+            <div class="modal-botoes">
+                <button onclick="criarSalaPrivada()" class="botao-confirmar">CRIAR</button>
+                <button onclick="fecharModalCriarSala()" class="botao-cancelar">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para iniciar conversa privada -->
+    <div class="modal" id="modal-conversa-privada">
+        <div class="modal-conteudo">
+            <h3>💬 CONVERSA PRIVADA</h3>
+            <p>Apelido do usuário:</p>
+            <input type="text" id="conversa-destino" placeholder="ex: Aranha123">
+            <div class="modal-botoes">
+                <button onclick="iniciarConversaPrivada()" class="botao-confirmar">INICIAR</button>
+                <button onclick="fecharModalConversaPrivada()" class="botao-cancelar">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="cliente.js"></script>
+</body>
+</html>

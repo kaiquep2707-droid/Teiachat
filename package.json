@@ -1,0 +1,25 @@
+{
+  "name": "teia-chat",
+  "version": "1.0.0",
+  "description": "Chat retrô inspirado nos anos 2000",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node servidor.js",
+    "dev": "nodemon servidor.js"
+  },
+  "keywords": [
+    "chat",
+    "retro",
+    "socket.io",
+    "nodejs"
+  ],
+  "author": "Seu nome",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.22.1",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
