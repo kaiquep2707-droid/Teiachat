@@ -50,18 +50,20 @@
         
         // Criar seleção de avatares
         const container = document.getElementById('selecao-avatar');
-        avatares.forEach(avatar => {
-            const span = document.createElement('span');
-            span.className = 'avatar-opcao';
-            span.textContent = avatar;
-            span.onclick = () => {
-                document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
-                span.classList.add('selecionado');
-                avatarSelecionado = avatar;
-            };
-            if (avatar === '🕷️') span.classList.add('selecionado');
-            container.appendChild(span);
-        });
+        if (container) {
+            avatares.forEach(avatar => {
+                const span = document.createElement('span');
+                span.className = 'avatar-opcao';
+                span.textContent = avatar;
+                span.onclick = () => {
+                    document.querySelectorAll('.avatar-opcao').forEach(el => el.classList.remove('selecionado'));
+                    span.classList.add('selecionado');
+                    avatarSelecionado = avatar;
+                };
+                if (avatar === '🕷️') span.classList.add('selecionado');
+                container.appendChild(span);
+            });
+        }
         
         function tecerEntrada() {
             const apelido = document.getElementById('apelido').value.trim();
@@ -90,13 +92,6 @@
         document.getElementById('apelido').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') tecerEntrada();
         });
-        <!-- No final do body, antes do script -->
-<div class="som-control">
-    <button onclick="ativarSom()" class="botao-som" id="botao-ativar-som">
-        🔇 Ativar Som
-    </button>
-    <span class="indicador-som" id="indicador-som">🔇</span>
-</div>
     </script>
 </body>
 </html>
